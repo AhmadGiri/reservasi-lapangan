@@ -11,7 +11,7 @@ class Court extends Model
   
     protected $table = 'courts';
     
-    protected $guarded = [id];
+    protected $guarded = ['id'];
     
     public function bookingDetails()
     {

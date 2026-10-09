@@ -10,8 +10,7 @@ class CourtController extends Controller
 {
     public function index()
     {
-        $courts = Court::latest()->get();
-
+        $courts = Court::latest()->paginate(10);
         return view('admin.courts.index', compact('courts'));
     }
 
@@ -22,29 +21,28 @@ class CourtController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $request->validate([
             'name' => 'required|string|max:255',
             'type' => 'required|in:Futsal,Badminton,Basket',
-            'price_per_hour' => 'required|integer|min:0',
+            'price_per_hour' => 'required|numeric|min:0',
             'description' => 'required|string',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
+        $imagePath = null;
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')
-                ->store('courts', 'public');
+            $imagePath = $request->file('image')->store('courts', 'public');
         }
 
-        Court::create($validated);
+        Court::create([
+            'name' => $request->name,
+            'type' => $request->type,
+            'price_per_hour' => $request->price_per_hour,
+            'description' => $request->description,
+            'image' => $imagePath,
+        ]);
 
-        return redirect()
-            ->route('admin.courts.index')
-            ->with('success', 'Lapangan berhasil ditambahkan.');
-    }
-
-    public function show(Court $court)
-    {
-        return view('admin.courts.show', compact('court'));
+        return redirect()->route('courts.index')->with('success', 'Data lapangan berhasil ditambahkan!');
     }
 
     public function edit(Court $court)
@@ -54,40 +52,40 @@ class CourtController extends Controller
 
     public function update(Request $request, Court $court)
     {
-        $validated = $request->validate([
+        $request->validate([
             'name' => 'required|string|max:255',
             'type' => 'required|in:Futsal,Badminton,Basket',
-            'price_per_hour' => 'required|integer|min:0',
+            'price_per_hour' => 'required|numeric|min:0',
             'description' => 'required|string',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
+        $imagePath = $court->image;
         if ($request->hasFile('image')) {
-            if ($court->image) {
+            if ($court->image && Storage::disk('public')->exists($court->image)) {
                 Storage::disk('public')->delete($court->image);
             }
-
-            $validated['image'] = $request->file('image')
-                ->store('courts', 'public');
+            $imagePath = $request->file('image')->store('courts', 'public');
         }
 
-        $court->update($validated);
+        $court->update([
+            'name' => $request->name,
+            'type' => $request->type,
+            'price_per_hour' => $request->price_per_hour,
+            'description' => $request->description,
+            'image' => $imagePath,
+        ]);
 
-        return redirect()
-            ->route('admin.courts.index')
-            ->with('success', 'Lapangan berhasil diperbarui.');
+        return redirect()->route('courts.index')->with('success', 'Data lapangan berhasil diperbarui!');
     }
 
     public function destroy(Court $court)
     {
-        if ($court->image) {
+        if ($court->image && Storage::disk('public')->exists($court->image)) {
             Storage::disk('public')->delete($court->image);
         }
-
         $court->delete();
 
-        return redirect()
-            ->route('admin.courts.index')
-            ->with('success', 'Lapangan berhasil dihapus.');
+        return redirect()->route('courts.index')->with('success', 'Data lapangan berhasil dihapus!');
     }
 }

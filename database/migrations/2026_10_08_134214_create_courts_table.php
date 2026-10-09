@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('courts', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->enum('type'['Futsal', 'Badminton', 'Basket'];
+            $table->enum('type', ['Futsal', 'Badminton', 'Basket']);
             $table->integer('price_per_hour');
             $table->text('description');
             $table->string('image')->nullable();
