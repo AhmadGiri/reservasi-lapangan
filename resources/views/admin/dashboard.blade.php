@@ -46,12 +46,12 @@
                                     <td class="p-4">{{ $booking->customer_phone }}</td>
                                     <td class="p-4">
                                         <div class="font-semibold">{{ $booking->booking_date }}</div>
-                                        @foreach($booking->bookingDetails as $detail)
+                                        @foreach($booking->details as $detail)
                                             <span class="text-xs text-gray-500">Jam: {{ $detail->start_time }} ({{ $detail->duration_hours }} Jam)</span>
                                         @endforeach
                                     </td>
                                     <td class="p-4">
-                                        @foreach($booking->bookingDetails as $detail)
+                                        @foreach($booking->details as $detail)
                                             <span class="bg-blue-100 text-blue-800 font-bold px-2.5 py-1 rounded-full text-xs">
                                                 {{ $detail->court->name ?? 'Lapangan' }}
                                             </span>

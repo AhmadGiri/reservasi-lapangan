@@ -59,7 +59,7 @@ class BookingController extends Controller
 
     public function adminDashboard()
     {
-        $bookings = Booking::with('bookingDetails.court')->latest()->get();
+        $bookings = Booking::with('details.court')->latest()->get();
         return view('admin.dashboard', compact('bookings'));
     }
 

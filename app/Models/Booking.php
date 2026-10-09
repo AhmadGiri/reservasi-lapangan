@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\BookingDetail;
 
 class Booking extends Model
 {
@@ -14,6 +15,6 @@ class Booking extends Model
     
   public function details()
   {
-    return $this->hasMany(BookingDetail::class);
+    return $this->hasMany(BookingDetail::class, 'booking_id');
   }
 }
